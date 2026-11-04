@@ -3,24 +3,330 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Road Rush</title>
+<title>Road Rush – Arcade racing for iPhone and iPad</title>
+<meta name="description" content="Road Rush is a free arcade driving game for iPhone and iPad. Weave through traffic, chain near misses, take the Daily Challenge and build your garage of nine cars.">
+<meta name="theme-color" content="#0B1A2C">
+<meta name="color-scheme" content="dark">
+<meta name="apple-itunes-app" content="app-id=6815286222">
+<link rel="canonical" href="https://kafledelius.github.io/">
+<link rel="icon" type="image/png" href="road-rush/img/favicon-64.png">
+<link rel="apple-touch-icon" href="road-rush/img/apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Road Rush">
+<meta property="og:title" content="Road Rush – Dodge traffic. Build your car.">
+<meta property="og:description" content="A free arcade driving game for iPhone and iPad. Weave through traffic, chain near misses, take the Daily Challenge and build your garage.">
+<meta property="og:url" content="https://kafledelius.github.io/">
+<meta property="og:image" content="https://kafledelius.github.io/road-rush/img/og-card.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Road Rush: a gold sports car boosting through a colourful city at sunset">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"MobileApplication","name":"Road Rush","operatingSystem":"iOS","applicationCategory":"GameApplication","url":"https://kafledelius.github.io/","downloadUrl":"https://apps.apple.com/app/id6815286222","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
+</script>
 <style>
-  :root { --ink: #16324f; --muted: #4f6b84; --bg: #fff; --link: #1f6fb2; }
-  @media (prefers-color-scheme: dark) { :root { --ink: #eef3f8; --muted: #b5c6d6; --bg: #122a42; --link: #8cc8f5; } }
-  body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-  main { max-width: 720px; margin: 0 auto; padding: 32px 16px 64px; }
-  h1 { font-size: 32px; line-height: 1.2; margin: 0 0 8px; }
-  p { margin: 0 0 12px; }
-  a { color: var(--link); }
-  .by { color: var(--muted); margin-bottom: 24px; }
+  :root {
+    --bg: #0B1A2C; --surface: #12283F; --panel: #1B3D5E; --raised: #2A5577;
+    --text: #FFF5DD; --muted: #C7D8E6; --faint: #8FA9BF;
+    --accent: #FFD465; --accent-ink: #1A1405; --info: #8CE4EC; --neon: #FF5FB8;
+    --line: rgba(199, 216, 230, 0.16);
+    --radius: 20px;
+  }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #0B1A2C; } }
+  :root[data-theme="dark"] { --bg: #0B1A2C; }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 17px/1.6 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  a { color: var(--info); }
+  img { display: block; max-width: 100%; }
+  .wrap { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+
+  /* Header */
+  .hero { position: relative; min-height: min(86vh, 780px); display: flex; flex-direction: column; overflow: hidden; isolation: isolate; }
+  .hero-art, .hero-art img { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .hero-art img { object-fit: cover; object-position: 68% 50%; z-index: -2; }
+  .hero::before { content: ""; position: absolute; inset: 0; z-index: -1;
+    background:
+      linear-gradient(90deg, rgba(11,26,44,0.94) 0%, rgba(11,26,44,0.82) 30%, rgba(11,26,44,0.25) 58%, rgba(11,26,44,0) 72%),
+      linear-gradient(0deg, var(--bg) 0%, rgba(11,26,44,0) 22%),
+      linear-gradient(180deg, rgba(11,26,44,0.55) 0%, rgba(11,26,44,0) 16%); }
+  .hero > .wrap { width: 100%; }
+  .top { display: flex; align-items: center; justify-content: space-between; padding-top: 20px; padding-bottom: 20px; }
+  .brand { display: flex; align-items: center; gap: 10px; color: var(--text); text-decoration: none; font-weight: 800; letter-spacing: 0.02em; }
+  .brand img { width: 36px; height: 36px; border-radius: 9px; }
+  .top nav { display: flex; gap: 22px; }
+  .top nav a { color: var(--muted); text-decoration: none; font-weight: 600; font-size: 15px; }
+  .top nav a:hover { color: var(--text); }
+  .hero-copy { flex: 1; display: flex; flex-direction: column; justify-content: center; padding-bottom: 72px; max-width: 1160px; }
+  .hero-copy > * { max-width: 520px; }
+  .hero-copy > .cta-row { max-width: 600px; }
+  .app-icon { width: 92px; height: 92px; border-radius: 21px; box-shadow: 0 12px 32px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.08); margin-bottom: 22px; }
+  .eyebrow { margin: 0 0 6px; color: var(--accent); font-weight: 700; font-size: 14px; letter-spacing: 0.14em; text-transform: uppercase; }
+  h1 { margin: 0; font-size: clamp(54px, 9vw, 104px); line-height: 0.92; font-weight: 900; font-style: italic; letter-spacing: -0.02em; text-transform: uppercase; text-shadow: 0 4px 24px rgba(0,0,0,0.35); }
+  h1 .stripe { display: block; width: 132px; height: 8px; margin: 18px 0 0; border-radius: 4px; background: repeating-linear-gradient(90deg, var(--accent) 0 34px, transparent 34px 50px); transform: skewX(-20deg); }
+  .tagline { margin: 22px 0 10px; font-size: clamp(22px, 2.6vw, 28px); font-weight: 800; line-height: 1.25; }
+  .lede { margin: 0 0 28px; color: var(--muted); font-size: 18px; }
+  .cta-row { display: flex; flex-wrap: wrap; gap: 12px; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; padding: 0 24px; border-radius: 14px; font-weight: 800; font-size: 17px; text-decoration: none; }
+  .btn.primary { background: var(--accent); color: var(--accent-ink); box-shadow: 0 6px 0 #C9A132, 0 10px 28px rgba(255,212,101,0.25); }
+  .btn.primary:hover { transform: translateY(-1px); }
+  .btn.primary:active { transform: translateY(3px); box-shadow: 0 3px 0 #C9A132; }
+  .btn.ghost { color: var(--text); border: 1.5px solid rgba(255,245,221,0.35); background: rgba(11,26,44,0.35); }
+  /* Until the app is released the store button is a plain label, not a link to a missing page. */
+  .btn.soon { color: var(--accent); border: 1.5px solid rgba(255,212,101,0.6); background: rgba(255,212,101,0.12); cursor: default; }
+  .btn svg { width: 20px; height: 20px; }
+  .facts { display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 22px 0 0; padding: 0; list-style: none; color: var(--muted); font-size: 15px; font-weight: 600; }
+  .facts li { display: flex; align-items: center; gap: 7px; }
+  .facts li::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--info); }
+
+  /* Feature rows */
+  section { padding: 72px 0; }
+  .section-head { max-width: 640px; margin: 0 0 40px; }
+  .kicker { margin: 0 0 8px; color: var(--accent); font-weight: 800; font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; }
+  h2 { margin: 0 0 12px; font-size: clamp(28px, 3.6vw, 40px); line-height: 1.12; font-weight: 850; letter-spacing: -0.01em; }
+  .section-head p, .row .copy p { margin: 0; color: var(--muted); }
+  .rows { display: grid; gap: 64px; }
+  .row { display: grid; grid-template-columns: 1.35fr 1fr; gap: 48px; align-items: center; }
+  .row:nth-child(even) { grid-template-columns: 1fr 1.35fr; }
+  .row:nth-child(even) .shot { order: 2; }
+  .shot { margin: 0; padding: 10px; border-radius: 30px; background: linear-gradient(160deg, #2B4F72, #0F2238); box-shadow: 0 24px 60px rgba(0,0,0,0.45), inset 0 0 0 1px rgba(255,255,255,0.08); }
+  .shot img { width: 100%; height: auto; aspect-ratio: 2868 / 1320; border-radius: 22px; }
+  .row .copy h3 { margin: 0 0 12px; font-size: clamp(24px, 2.8vw, 32px); line-height: 1.15; font-weight: 850; }
+  .row .copy .num { display: inline-block; margin-bottom: 14px; padding: 4px 12px; border-radius: 999px; background: rgba(140,228,236,0.12); color: var(--info); font-weight: 800; font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; }
+  .row .copy ul { margin: 16px 0 0; padding: 0; list-style: none; display: grid; gap: 8px; color: var(--text); }
+  .row .copy li { display: flex; gap: 10px; }
+  .row .copy li::before { content: ""; flex: none; width: 14px; height: 4px; margin-top: 12px; border-radius: 2px; background: var(--accent); transform: skewX(-20deg); }
+
+  /* Extras */
+  .cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+  .card { padding: 26px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--line); }
+  .card .ico { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 12px; background: var(--panel); color: var(--accent); margin-bottom: 16px; }
+  .card .ico svg { width: 24px; height: 24px; }
+  .card h3 { margin: 0 0 8px; font-size: 20px; font-weight: 800; }
+  .card p { margin: 0; color: var(--muted); font-size: 16px; }
+
+  /* Gallery */
+  .gallery { display: grid; grid-auto-flow: column; grid-auto-columns: min(560px, 82vw); gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 4px 24px 18px; margin: 0 -24px; scrollbar-width: thin; }
+  .gallery img { width: 100%; height: auto; aspect-ratio: 2868 / 1320; border-radius: 18px; scroll-snap-align: start; box-shadow: 0 12px 30px rgba(0,0,0,0.35); }
+
+  /* Closing call */
+  .finale { position: relative; overflow: hidden; border-radius: 28px; padding: 56px 40px; text-align: center;
+    background: radial-gradient(120% 140% at 50% 0%, #2A5577 0%, #12283F 55%, #0B1A2C 100%); border: 1px solid var(--line); }
+  .finale::after { content: ""; position: absolute; left: 50%; bottom: -60px; width: 70%; height: 120px; transform: translateX(-50%); background: radial-gradient(closest-side, rgba(255,95,184,0.45), transparent); pointer-events: none; }
+  .finale h2 { font-style: italic; text-transform: uppercase; font-weight: 900; }
+  .finale p { margin: 0 auto 28px; max-width: 520px; color: var(--muted); }
+  .finale .cta-row { justify-content: center; position: relative; z-index: 1; }
+
+  footer { padding: 40px 0 56px; color: var(--faint); font-size: 14px; }
+  footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 28px; justify-content: space-between; border-top: 1px solid var(--line); padding-top: 28px; }
+  footer nav { display: flex; gap: 22px; }
+  footer a { color: var(--muted); text-decoration: none; }
+  footer a:hover { color: var(--text); }
+  footer .legal { flex-basis: 100%; margin: 0; font-size: 13px; }
+
+  @media (max-width: 900px) {
+    .row, .row:nth-child(even) { grid-template-columns: 1fr; gap: 24px; }
+    .row:nth-child(even) .shot { order: 0; }
+  }
+  @media (max-width: 640px) {
+    .wrap { padding: 0 16px; }
+    .hero { min-height: 0; display: block; }
+    .hero-art { position: relative; display: block; aspect-ratio: 1100 / 751; height: auto; }
+    .hero-art img { position: absolute; z-index: 0; object-position: 50% 50%; }
+    .hero::before { z-index: 1; height: calc(100vw * 751 / 1100); background: linear-gradient(0deg, var(--bg) 0%, rgba(11,26,44,0) 45%), linear-gradient(180deg, rgba(11,26,44,0.7) 0%, rgba(11,26,44,0) 30%); }
+    .top { position: absolute; top: 0; left: 0; right: 0; z-index: 2; }
+    .top nav { display: none; }
+    .hero-copy { position: relative; z-index: 2; margin-top: -64px; padding-bottom: 40px; }
+    .app-icon { width: 76px; height: 76px; border-radius: 17px; margin-bottom: 16px; }
+    .lede { font-size: 17px; }
+    .btn { flex: 1 1 auto; }
+    section { padding: 48px 0; }
+    .rows { gap: 48px; }
+    .cards { grid-template-columns: 1fr; }
+    .shot { padding: 6px; border-radius: 22px; }
+    .shot img { border-radius: 17px; }
+    .gallery { padding: 4px 16px 18px; margin: 0 -16px; }
+    .finale { padding: 40px 20px; }
+  }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .btn.primary:hover { transform: none; } }
 </style>
 </head>
 <body>
+<header class="hero">
+  <picture class="hero-art">
+    <source media="(max-width: 640px)" srcset="road-rush/img/hero-phone.jpg">
+    <img src="road-rush/img/hero-2400.jpg" srcset="road-rush/img/hero-1200.jpg 1200w, road-rush/img/hero-2400.jpg 2400w" sizes="100vw" alt="A gold sports car with pink neon boosts down a colourful city street at sunset, past a road barrier and traffic.">
+  </picture>
+  <div class="top wrap">
+    <a class="brand" href="./"><img src="road-rush/img/icon-256.png" alt="">Road Rush</a>
+    <nav aria-label="Main">
+      <a href="#features">Features</a>
+      <a href="#screens">Screenshots</a>
+      <a href="road-rush/support.html">Support</a>
+    </nav>
+  </div>
+  <div class="hero-copy wrap">
+    <img class="app-icon" src="road-rush/img/icon-256.png" width="92" height="92" alt="Road Rush app icon">
+    <p class="eyebrow">Arcade racing for iPhone and iPad</p>
+    <h1>Road Rush<span class="stripe" aria-hidden="true"></span></h1>
+    <p class="tagline">Dodge traffic. Build your car.</p>
+    <p class="lede">Weave through rush hour at full throttle, chain near misses for bonus points and see how far you get before you crash.</p>
+    <div class="cta-row">
+      <span class="btn soon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        Coming soon to the App Store
+      </span>
+      <a class="btn ghost" href="#features">See what's inside</a>
+    </div>
+    <ul class="facts">
+      <li>Free to play</li>
+      <li>No in-app purchases</li>
+      <li>No forced ads</li>
+    </ul>
+  </div>
+</header>
+
 <main>
-  <h1>Road Rush</h1>
-  <p class="by">An arcade driving game for iPhone and iPad by Kasper Andersen.</p>
-  <p><a href="road-rush/support.html">Support</a></p>
-  <p><a href="road-rush/privacy-policy.html">Privacy policy</a></p>
+  <section id="features">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="kicker">How it plays</p>
+        <h2>One thumb, one road, one more run.</h2>
+        <p>Every run is a fresh stretch of road. The longer you last, the faster it gets.</p>
+      </div>
+      <div class="rows">
+        <article class="row">
+          <figure class="shot"><img src="road-rush/img/shot-1_city.jpg" width="1434" height="660" loading="lazy" alt="Gameplay: a gold car with pink neon heads for a pedestrian crossing in the city, with a purple car ahead and a tracked mission on screen."></figure>
+          <div class="copy">
+            <span class="num">Traffic</span>
+            <h3>Thread the gap</h3>
+            <p>Steer with your thumb, hold gas to go faster and score more, and brake when the gap closes.</p>
+            <ul>
+              <li>Cars, trucks and fire engines in every lane</li>
+              <li>Barriers, cones and pedestrians on the crossings</li>
+              <li>Shield, Nitro and Magnet power-ups</li>
+            </ul>
+          </div>
+        </article>
+        <article class="row">
+          <figure class="shot"><img src="road-rush/img/shot-2_night.jpg" width="1434" height="660" loading="lazy" alt="Gameplay at dusk: a black car with blue neon drives through the city, past cones on the roadside."></figure>
+          <div class="copy">
+            <span class="num">Risk pays</span>
+            <h3>Close calls score big</h3>
+            <p>Every near miss earns bonus points. Chain them within a few seconds to multiply up to ×5, and a near miss at a truck or fire engine counts double.</p>
+          </div>
+        </article>
+        <article class="row">
+          <figure class="shot"><img src="road-rush/img/shot-3_western.jpg" width="1434" height="660" loading="lazy" alt="Gameplay in the western desert: a dune buggy on a straight road lined with cacti, fences and power lines."></figure>
+          <div class="copy">
+            <span class="num">Six worlds</span>
+            <h3>From city lights to the open desert</h3>
+            <p>The road runs through city, suburb, forest, western, arctic and wasteland, and day turns to night as you drive.</p>
+          </div>
+        </article>
+        <article class="row">
+          <figure class="shot"><img src="road-rush/img/shot-4_garage.jpg" width="1434" height="660" loading="lazy" alt="The garage: the GT Coupe with pink neon, with Body, Wheels and Lights &amp; FX style groups and paint, livery, wing, roof and plate options."></figure>
+          <div class="copy">
+            <span class="num">Garage</span>
+            <h3>Build the car you want to crash</h3>
+            <p>Nine cars, from the Family Wagon to the Apex GT, each with its own perk. Every car keeps its own upgrades and style.</p>
+            <ul>
+              <li>Engine, gearbox and tyre upgrades</li>
+              <li>Paint, livery, wing, roof, number plate, wheels, neon, tail lights and boost trail</li>
+              <li>Try any style on before you spend</li>
+            </ul>
+          </div>
+        </article>
+        <article class="row">
+          <figure class="shot"><img src="road-rush/img/shot-6_today.jpg" width="1434" height="660" loading="lazy" alt="Missions, Today tab: a seven-day reward calendar on day 4 with a neon prize on day 7, and the Daily Challenge with three medals to win."></figure>
+          <div class="copy">
+            <span class="num">Every day</span>
+            <h3>Something new every day</h3>
+            <p>Come back for a reward every day. Day seven gives an item you cannot buy.</p>
+            <ul>
+              <li>Daily Challenge: the same road and car for everyone, three medals to win</li>
+              <li>A new event every Monday, such as Rush Hour, Big Rigs or Night Drive</li>
+              <li>Road Pass: a free 30-tier season with weekly missions</li>
+            </ul>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="section-head">
+        <p class="kicker">Always something to chase</p>
+        <h2>Missions, rivals and a fair deal.</h2>
+      </div>
+      <div class="cards">
+        <div class="card">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/></svg></div>
+          <h3>35 missions</h3>
+          <p>Daily goals and long-term missions that unlock styles. Pin one and watch its progress live while you drive.</p>
+        </div>
+        <div class="card">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 6h3a3 3 0 0 1-3 4"/><path d="M7 6H4a3 3 0 0 0 3 4"/></svg></div>
+          <h3>Two leaderboards</h3>
+          <p>Every run scores on distance, speed and risk. Sign in to Game Center for the all-time High Scores and a fresh Daily Challenge board every day.</p>
+        </div>
+        <div class="card">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 6v6c0 4.5 3.4 8.2 8 9 4.6-.8 8-4.5 8-9V6z"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg></div>
+          <h3>Fair by design</h3>
+          <p>No in-app purchases and no ads between runs. Every ad is your choice: spin the prize wheel, keep driving once after a crash, or keep your streak after a missed day.</p>
+        </div>
+        <div class="card">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18h10a4 4 0 0 0 .7-7.94A6 6 0 0 0 6.2 9.1 4.5 4.5 0 0 0 7 18z"/></svg></div>
+          <h3>Your garage comes with you</h3>
+          <p>Signed in to iCloud, your progress is backed up to your own iCloud and comes back on a new iPhone or iPad. Reminders are optional, at most one a day.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="screens">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="kicker">Screenshots</p>
+        <h2>See it in motion.</h2>
+      </div>
+      <div class="gallery" tabindex="0" aria-label="Screenshots, scroll sideways">
+        <img src="road-rush/img/shot-1_city.jpg" width="1434" height="660" loading="lazy" alt="City run in a gold car with pink neon">
+        <img src="road-rush/img/shot-5_suburb.jpg" width="1434" height="660" loading="lazy" alt="Suburb run in a purple muscle car">
+        <img src="road-rush/img/shot-2_night.jpg" width="1434" height="660" loading="lazy" alt="City run at dusk">
+        <img src="road-rush/img/shot-3_western.jpg" width="1434" height="660" loading="lazy" alt="Western desert run in a dune buggy">
+        <img src="road-rush/img/shot-4_garage.jpg" width="1434" height="660" loading="lazy" alt="Garage style options">
+        <img src="road-rush/img/shot-6_today.jpg" width="1434" height="660" loading="lazy" alt="Daily reward calendar and Daily Challenge">
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="finale">
+        <h2>How far can you get?</h2>
+        <p>Road Rush is coming to iPhone and iPad, free to play. One more run will always be one tap away.</p>
+        <div class="cta-row">
+          <span class="btn soon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+            Coming soon to the App Store
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Kasper Andersen</span>
+    <nav aria-label="Footer">
+      <a href="road-rush/support.html">Support</a>
+      <a href="road-rush/privacy-policy.html">Privacy policy</a>
+    </nav>
+    <p class="legal">Apple, iPhone, iPad and App Store are trademarks of Apple Inc. Game Center is a trademark of Apple Inc.</p>
+  </div>
+</footer>
 </body>
 </html>
